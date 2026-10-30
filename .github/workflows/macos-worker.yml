@@ -1,0 +1,37 @@
+name: macOS Worker
+on:
+  push:
+    branches: [main, 'codex/macos-worker*']
+    paths: ['tools/macos-worker/**', 'scripts/worker-runtime.mjs', 'scripts/tray-worker.mjs', 'scripts/build-macos-worker.sh', 'tests/*worker*.mjs', '.github/workflows/macos-worker.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: macos-worker-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+            artifact: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+            artifact: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build, sign ad hoc, and test the native app
+        run: bash scripts/build-macos-worker.sh '${{ matrix.arch }}'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: fornai-worker-macos-${{ matrix.artifact }}
+          path: tools/macos-worker/build/${{ matrix.artifact }}/dist/*
+          if-no-files-found: error
+          retention-days: 14

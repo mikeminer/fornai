@@ -1,0 +1,4 @@
+tools/macos-worker/build/
+.DS_Store
+.env*
+.worker-state/
