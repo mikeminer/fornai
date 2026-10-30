@@ -206,13 +206,13 @@ final class WorkerAppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate
             failSelfTest("UI bootstrap")
         }
         window.contentView?.layoutSubtreeIfNeeded()
-        let expected = ["settings.apiBase", "settings.apiKey", "settings.wallet", "settings.workerName", "settings.model", "settings.autoStart", "settings.runAtLogin", "worker.toggle", "worker.refresh", "worker.verify", "worker.pair", "worker.save", "worker.help"]
+        let expected = ["settings.apiBase", "settings.apiKey", "settings.wallet", "settings.workerName", "settings.model", "settings.autoStart", "settings.runAtLogin", "settings.webSearchEnabled", "settings.searchEngine", "settings.agentMaxSteps", "settings.agentMaxSearches", "worker.toggle", "worker.refresh", "worker.verify", "worker.pair", "worker.save", "worker.help"]
         guard expected.allSatisfy({ view.controls[$0] != nil }),
               view.controls["settings.apiKey"] is NSSecureTextField,
               view.controls["settings.model"] is NSComboBox,
               view.controls["worker.save"]?.action != nil,
               view.controls["worker.toggle"]?.action != nil,
-              !core.isRunning, !core.autoStart, !core.runAtLogin,
+              !core.isRunning, !core.autoStart, !core.runAtLogin, !core.webSearchEnabled,
               core.apiKey.isEmpty, core.wallet.isEmpty else { failSelfTest("Controls and isolated defaults") }
         guard ["settings.apiBase", "settings.apiKey", "settings.wallet", "settings.model"].allSatisfy({
             guard let field = view.controls[$0] else { return false }

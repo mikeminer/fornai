@@ -59,7 +59,7 @@ NODE="$APP/Contents/Resources/runtime/node"
 xcrun swiftc -swift-version 5 -parse-as-library -sdk "$SDK" -target "$ARCH-apple-macosx13.5" \
   "$ROOT/tools/macos-worker/Sources/Policy.swift" "$ROOT/tools/macos-worker/Tests/PolicyTests.swift" -o "$OUT/policy-tests"
 "$OUT/policy-tests"
-"$NODE" --test "$ROOT/tests/worker-runtime.test.mjs" "$ROOT/tests/tray-worker.test.mjs" "$ROOT/tests/worker-renewal.test.mjs"
+"$NODE" --test "$ROOT/tests/worker-runtime.test.mjs" "$ROOT/tests/worker-agent.test.mjs" "$ROOT/tests/tray-worker.test.mjs" "$ROOT/tests/worker-renewal.test.mjs"
 "$APP/Contents/MacOS/FornaiWorker" --self-test --screenshot "$OUT/dist/fornai-worker-macos-$NODE_ARCH.png"
 ZIP="$OUT/dist/fornai-worker-macos-$NODE_ARCH.zip"
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"

@@ -132,10 +132,65 @@ import Darwin
             try require(values["NODE_OPTIONS"] == "--use-system-ca")
             for key in ["NODE_TLS_REJECT_UNAUTHORIZED", "NODE_EXTRA_CA_CERTS", "NODE_PATH", "DYLD_INSERT_LIBRARIES", "DATABASE_URL", "HTTPS_PROXY", "FORNAI_SESSION_SECRET"] { try require(values[key] == nil) }
             try require(values["FORNAI_WORKER_ENV_FILE"] == "")
+            try require(values["FORNAI_AGENT_WEB_SEARCH"] == "0")
+            try require(values["FORNAI_AGENT_SEARCH_ENGINE"] == "tavily-search")
+            try require(values["FORNAI_AGENT_MAX_STEPS"] == "4")
+            try require(values["FORNAI_AGENT_MAX_SEARCHES"] == "2")
+        }
+        test("legacy Keychain configuration preserves credentials with research disabled") {
+            let old = Data("""
+                {"apiBase":"http://127.0.0.1:31415/v1","apiKey":"fixture-local","wallet":"\(wallet)","workerName":"existing-mac","model":"existing-model","workerToken":"fixture-worker","tokenWallet":"\(wallet)","autoStart":true,"runAtLogin":true,"saved":true}
+                """.utf8)
+            let config = try JSONDecoder().decode(WorkerConfiguration.self, from: old)
+            try WorkerPolicy.agentSettings(config)
+            try require(config.apiKey == "fixture-local" && config.workerToken == "fixture-worker")
+            try require(config.wallet == wallet && config.tokenWallet == wallet)
+            try require(config.workerName == "existing-mac" && config.model == "existing-model")
+            try require(config.autoStart && config.runAtLogin && config.saved)
+            try require(!config.webSearchEnabled && config.searchEngine == "tavily-search")
+            try require(config.agentMaxSteps == 4 && config.agentMaxSearches == 2)
+        }
+        test("research settings survive Codable and map only to fixed environment names") {
+            var config = WorkerConfiguration()
+            config.webSearchEnabled = true; config.searchEngine = "exa-search"
+            config.agentMaxSteps = 8; config.agentMaxSearches = 5
+            let restored = try JSONDecoder().decode(WorkerConfiguration.self, from: JSONEncoder().encode(config))
+            try WorkerPolicy.agentSettings(restored)
+            let values = WorkerPolicy.childEnvironment(restored, statePath: "/private/state", home: "/Users/test", temporary: "/tmp")
+            try require(values["FORNAI_AGENT_WEB_SEARCH"] == "1")
+            try require(values["FORNAI_AGENT_SEARCH_ENGINE"] == "exa-search")
+            try require(values["FORNAI_AGENT_MAX_STEPS"] == "8")
+            try require(values["FORNAI_AGENT_MAX_SEARCHES"] == "5")
+            try require(Set(values.keys.filter { $0.hasPrefix("FORNAI_AGENT_") }) == Set(["FORNAI_AGENT_WEB_SEARCH", "FORNAI_AGENT_SEARCH_ENGINE", "FORNAI_AGENT_MAX_STEPS", "FORNAI_AGENT_MAX_SEARCHES"]))
+        }
+        test("research engines cannot select automatic paid fallback or arbitrary endpoints") {
+            var config = WorkerConfiguration()
+            for engine in ["tavily-search", "exa-search", "firecrawl-search"] {
+                config.searchEngine = engine; try WorkerPolicy.agentSettings(config)
+            }
+            for engine in ["", "auto", "linkup-search", "https://example.com/search", "TAVILY-SEARCH", "tavily-search\n"] {
+                config.searchEngine = engine
+                try rejects { try WorkerPolicy.agentSettings(config) }
+            }
+        }
+        test("research budgets reject out of range even when research is disabled") {
+            var config = WorkerConfiguration()
+            config.agentMaxSteps = 2; config.agentMaxSearches = 1
+            try WorkerPolicy.agentSettings(config)
+            for steps in [Int.min, 0, 1, 9, Int.max] {
+                config.agentMaxSteps = steps
+                try rejects { try WorkerPolicy.agentSettings(config) }
+            }
+            config.agentMaxSteps = 4
+            for searches in [Int.min, 0, 6, Int.max] {
+                config.agentMaxSearches = searches
+                try rejects { try WorkerPolicy.agentSettings(config) }
+            }
         }
         test("first launch keeps login and work disabled") {
             let config = WorkerConfiguration()
             try require(!config.autoStart && !config.runAtLogin && !config.saved && config.workerToken.isEmpty)
+            try require(!config.webSearchEnabled && config.searchEngine == "tavily-search" && config.agentMaxSteps == 4 && config.agentMaxSearches == 2)
         }
         test("auto uses an actual advertised model instead of assuming an alias exists") {
             try require(try WorkerPolicy.automaticModel(["auto", "other"]) == "auto")

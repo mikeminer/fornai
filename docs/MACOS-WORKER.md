@@ -33,6 +33,14 @@ Le due versioni sono state compilate e verificate su runner macOS della rispetti
 
 La chiave FreeLLMAPI è locale; il collegamento al sito non la trasferisce a Fornai. Le richieste AI vengono elaborate dai fornitori configurati in FreeLLMAPI, secondo le loro condizioni e impostazioni. Questo worker usa tali API: non offre automaticamente la GPU del Mac.
 
+## Agente ricerca web
+
+La ricerca web è facoltativa e disattivata nelle configurazioni nuove e in quelle precedenti all’aggiornamento. Metti il worker in pausa, abilita **Agente ricerca web**, scegli Tavily, Exa o Firecrawl e salva. Il motore deve essere già configurato in FreeLLMAPI: il worker usa la stessa chiave unificata e non richiede altre credenziali.
+
+Puoi impostare da 2 a 8 passaggi e da 1 a 5 ricerche per task; i valori iniziali sono 4 passaggi e 2 ricerche. Il limite di passaggi può fermare il lavoro prima di raggiungere quello delle ricerche. Nella console del sito scegli **Ricerca web**: il task attende un worker con questa capacità attiva. **Risposta** mantiene il comportamento senza ricerche.
+
+L’agente lavora sugli estratti e sui collegamenti restituiti dal motore; non controlla un browser e non accede ai repository. L’avanzamento compare nello stato del worker, usando i messaggi già disponibili nell’app.
+
 ## Barra dei menu e avvio
 
 Chiudere la finestra nasconde soltanto le impostazioni. Per riaprirla, scegli **Apri Fornai Worker** dall’icona nella barra dei menu. Dallo stesso menu puoi avviare o mettere in pausa il worker, aggiornare il saldo e aprire fornai.dev.

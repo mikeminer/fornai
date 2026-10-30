@@ -14,9 +14,41 @@ struct WorkerConfiguration: Codable {
     var model = "auto"
     var workerToken = ""
     var tokenWallet = ""
+    var webSearchEnabled = false
+    var searchEngine = "tavily-search"
+    var agentMaxSteps = 4
+    var agentMaxSearches = 2
     var autoStart = false
     var runAtLogin = false
     var saved = false
+
+    init() { }
+
+    private enum CodingKeys: String, CodingKey {
+        case apiBase, apiKey, wallet, workerName, model, workerToken, tokenWallet
+        case webSearchEnabled, searchEngine, agentMaxSteps, agentMaxSearches
+        case autoStart, runAtLogin, saved
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        apiBase = try values.decode(String.self, forKey: .apiBase)
+        apiKey = try values.decode(String.self, forKey: .apiKey)
+        wallet = try values.decode(String.self, forKey: .wallet)
+        workerName = try values.decode(String.self, forKey: .workerName)
+        model = try values.decode(String.self, forKey: .model)
+        workerToken = try values.decode(String.self, forKey: .workerToken)
+        tokenWallet = try values.decode(String.self, forKey: .tokenWallet)
+        autoStart = try values.decode(Bool.self, forKey: .autoStart)
+        runAtLogin = try values.decode(Bool.self, forKey: .runAtLogin)
+        saved = try values.decode(Bool.self, forKey: .saved)
+        // Older Keychain records have no research settings. Keep research off
+        // and apply the same bounded defaults used for a first installation.
+        webSearchEnabled = try values.decodeIfPresent(Bool.self, forKey: .webSearchEnabled) ?? false
+        searchEngine = try values.decodeIfPresent(String.self, forKey: .searchEngine) ?? "tavily-search"
+        agentMaxSteps = try values.decodeIfPresent(Int.self, forKey: .agentMaxSteps) ?? 4
+        agentMaxSearches = try values.decodeIfPresent(Int.self, forKey: .agentMaxSearches) ?? 2
+    }
 }
 
 struct WorkerTokenClaims: Codable {
@@ -168,6 +200,7 @@ enum WorkerPolicy {
     }
 
     static func configuration(_ value: WorkerConfiguration, requirePair: Bool) throws -> WorkerConfiguration {
+        try agentSettings(value)
         var result = value
         result.apiBase = try localAPI(value.apiBase.trimmingCharacters(in: .whitespacesAndNewlines)).absoluteString
         result.apiKey = value.apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -183,6 +216,18 @@ enum WorkerPolicy {
             throw WorkerFailure("Collega il wallet al sito prima di avviare il worker.")
         }
         return result
+    }
+
+    static func agentSettings(_ value: WorkerConfiguration) throws {
+        guard ["tavily-search", "exa-search", "firecrawl-search"].contains(value.searchEngine) else {
+            throw WorkerFailure("Scegli Tavily, Exa o Firecrawl per la ricerca web.")
+        }
+        guard (2...8).contains(value.agentMaxSteps) else {
+            throw WorkerFailure("Il limite dei passi deve essere compreso tra 2 e 8.")
+        }
+        guard (1...5).contains(value.agentMaxSearches) else {
+            throw WorkerFailure("Il limite delle ricerche deve essere compreso tra 1 e 5.")
+        }
     }
 
     static func decodeEvent(_ data: Data) throws -> WorkerEvent {
@@ -218,6 +263,10 @@ enum WorkerPolicy {
          "FORNAI_WORKER_STATE_DIR": statePath, "FORNAI_WORKER_ENV_FILE": "",
          "FORNAI_WORKER_INTERVAL_MS": "15000", "FORNAI_LEASE_RENEW_MS": "30000",
          "FORNAI_REQUEST_TIMEOUT_MS": "15000", "FORNAI_INFERENCE_TIMEOUT_MS": "180000",
+         "FORNAI_AGENT_WEB_SEARCH": config.webSearchEnabled ? "1" : "0",
+         "FORNAI_AGENT_SEARCH_ENGINE": config.searchEngine,
+         "FORNAI_AGENT_MAX_STEPS": String(config.agentMaxSteps),
+         "FORNAI_AGENT_MAX_SEARCHES": String(config.agentMaxSearches),
          "FREELLMAPI_BASE_URL": config.apiBase, "FREELLMAPI_API_KEY": config.apiKey,
          "FREELLMAPI_MODEL": config.model, "FREELLMAPI_MAX_TOKENS": "4096"]
     }

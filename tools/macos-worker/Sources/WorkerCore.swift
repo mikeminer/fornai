@@ -21,10 +21,12 @@ private final class WorkerKeychain {
               let config = try? JSONDecoder().decode(WorkerConfiguration.self, from: data) else {
             throw WorkerFailure("Impossibile leggere la configurazione dal Portachiavi. Sbloccalo e riapri l’app.")
         }
+        try WorkerPolicy.agentSettings(config)
         return config
     }
 
     func save(_ config: WorkerConfiguration) throws {
+        try WorkerPolicy.agentSettings(config)
         let data = try JSONEncoder().encode(config)
         guard data.count <= 131072 else { throw WorkerFailure("Configurazione troppo grande.") }
         let changes: [String: Any] = [kSecValueData as String: data]
@@ -185,6 +187,10 @@ private final class WorkerChild {
     @Published var wallet = "" { didSet { draftChanged(walletChanged: oldValue != wallet) } }
     @Published var workerName = "fornai-mac" { didSet { draftChanged() } }
     @Published var model = "auto" { didSet { draftChanged() } }
+    @Published var webSearchEnabled = false { didSet { draftChanged() } }
+    @Published var searchEngine = "tavily-search" { didSet { draftChanged() } }
+    @Published var agentMaxSteps = 4 { didSet { draftChanged() } }
+    @Published var agentMaxSearches = 2 { didSet { draftChanged() } }
     @Published var autoStart = false { didSet { draftChanged() } }
     @Published var runAtLogin = false { didSet { draftChanged() } }
     @Published private(set) var status = "paused"
@@ -243,11 +249,15 @@ private final class WorkerChild {
         loading = true; defer { loading = false }
         apiBase = config.apiBase; apiKey = config.apiKey; wallet = config.wallet; workerName = config.workerName
         model = config.model; autoStart = config.autoStart; runAtLogin = config.runAtLogin
+        webSearchEnabled = config.webSearchEnabled; searchEngine = config.searchEngine
+        agentMaxSteps = config.agentMaxSteps; agentMaxSearches = config.agentMaxSearches
     }
     private func draft() -> WorkerConfiguration {
         var config = saved
         config.apiBase = apiBase; config.apiKey = apiKey; config.wallet = wallet
         config.workerName = workerName; config.model = model; config.autoStart = autoStart; config.runAtLogin = runAtLogin
+        config.webSearchEnabled = webSearchEnabled; config.searchEngine = searchEngine
+        config.agentMaxSteps = agentMaxSteps; config.agentMaxSearches = agentMaxSearches
         if config.tokenWallet != wallet { config.workerToken = ""; config.tokenWallet = "" }
         return config
     }

@@ -14,6 +14,13 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
     private let wallet = NSTextField()
     private let workerName = NSTextField()
     private let model = NSComboBox()
+    private let webSearch = NSButton(checkboxWithTitle: "Abilita la ricerca web per questo worker", target: nil, action: nil)
+    private let searchEngine = NSPopUpButton(frame: .zero, pullsDown: false)
+    private let agentSteps = NSStepper()
+    private let agentSearches = NSStepper()
+    private let stepsValue = WorkerView.label("4", size: 14, weight: .medium)
+    private let searchesValue = WorkerView.label("2", size: 14, weight: .medium)
+    private let searchEngines = ["tavily-search", "exa-search", "firecrawl-search"]
     private let autoStart = NSButton(checkboxWithTitle: "Avvia il worker quando apro l’app", target: nil, action: nil)
     private let runAtLogin = NSButton(checkboxWithTitle: "Apri Fornai quando accedo al Mac", target: nil, action: nil)
     private let statusLabel = WorkerView.label("In pausa", size: 19, weight: .semibold)
@@ -100,7 +107,7 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
         view.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
     }
 
-    private func formRow(_ title: String, control: NSControl) -> NSStackView {
+    private func formRow(_ title: String, control: NSView) -> NSStackView {
         let caption = Self.label(title, size: 12, weight: .medium)
         caption.widthAnchor.constraint(equalToConstant: 106).isActive = true
         control.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -202,6 +209,20 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
         api.addArrangedSubview(verifyButton)
         add(api, to: content)
 
+        let research = section("Agente ricerca web", copy: "Usa estratti e collegamenti dei risultati con la stessa chiave FreeLLMAPI. Configura il motore scelto in FreeLLMAPI. Non apre browser o repository.")
+        register(webSearch, "settings.webSearchEnabled", label: webSearch.title)
+        webSearch.target = self
+        webSearch.action = #selector(preferencesChanged)
+        research.addArrangedSubview(webSearch)
+        searchEngine.addItems(withTitles: ["Tavily", "Exa", "Firecrawl"])
+        register(searchEngine, "settings.searchEngine", label: "Motore di ricerca web")
+        searchEngine.target = self
+        searchEngine.action = #selector(preferencesChanged)
+        add(formRow("Motore", control: searchEngine), to: research)
+        add(formRow("Passaggi massimi", control: numericLimit(agentSteps, value: stepsValue, id: "settings.agentMaxSteps", title: "Passaggi massimi dell’agente", minimum: 2, maximum: 8)), to: research)
+        add(formRow("Ricerche massime", control: numericLimit(agentSearches, value: searchesValue, id: "settings.agentMaxSearches", title: "Ricerche web massime", minimum: 1, maximum: 5)), to: research)
+        add(research, to: content)
+
         let account = section("Account Fornai", copy: "Inserisci l’indirizzo pubblico del wallet. Il collegamento si approva su fornai.dev nel browser; l’app non chiede la frase di recupero.")
         wallet.placeholderString = "Indirizzo pubblico Solana"
         wallet.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
@@ -246,6 +267,22 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
         return stack
     }
 
+    private func numericLimit(_ stepper: NSStepper, value: NSTextField, id: String, title: String, minimum: Double, maximum: Double) -> NSStackView {
+        stepper.minValue = minimum
+        stepper.maxValue = maximum
+        stepper.increment = 1
+        stepper.valueWraps = false
+        stepper.target = self
+        stepper.action = #selector(preferencesChanged)
+        register(stepper, id, label: title)
+        stepper.toolTip = "Da \(Int(minimum)) a \(Int(maximum)) per task."
+        value.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        stepper.widthAnchor.constraint(equalToConstant: 19).isActive = true
+        let spacer = NSView()
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        return horizontal([value, stepper, spacer], spacing: 8)
+    }
+
     private func refresh() {
         updating = true
         defer { updating = false }
@@ -262,11 +299,21 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
         if model.currentEditor() == nil { model.stringValue = controller.model }
         autoStart.state = controller.autoStart ? .on : .off
         runAtLogin.state = controller.runAtLogin ? .on : .off
+        webSearch.state = controller.webSearchEnabled ? .on : .off
+        searchEngine.selectItem(at: searchEngines.firstIndex(of: controller.searchEngine) ?? 0)
+        agentSteps.integerValue = controller.agentMaxSteps
+        agentSearches.integerValue = controller.agentMaxSearches
+        stepsValue.stringValue = String(controller.agentMaxSteps)
+        searchesValue.stringValue = String(controller.agentMaxSearches)
         let editable = !controller.isBusy && !controller.isRunning
         [apiBase, apiKey, wallet, workerName].forEach { $0.isEnabled = editable }
         model.isEnabled = editable
         autoStart.isEnabled = editable
         runAtLogin.isEnabled = editable
+        webSearch.isEnabled = editable
+        searchEngine.isEnabled = editable && controller.webSearchEnabled
+        agentSteps.isEnabled = editable && controller.webSearchEnabled
+        agentSearches.isEnabled = editable && controller.webSearchEnabled
         saveButton.isEnabled = editable
         verifyButton.isEnabled = editable
         pairButton.isEnabled = editable && !controller.wallet.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -305,6 +352,11 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
         if controller.model != model.stringValue { controller.model = model.stringValue }
         if controller.autoStart != (autoStart.state == .on) { controller.autoStart = autoStart.state == .on }
         if controller.runAtLogin != (runAtLogin.state == .on) { controller.runAtLogin = runAtLogin.state == .on }
+        if controller.webSearchEnabled != (webSearch.state == .on) { controller.webSearchEnabled = webSearch.state == .on }
+        let engine = searchEngines[max(0, searchEngine.indexOfSelectedItem)]
+        if controller.searchEngine != engine { controller.searchEngine = engine }
+        if controller.agentMaxSteps != agentSteps.integerValue { controller.agentMaxSteps = agentSteps.integerValue }
+        if controller.agentMaxSearches != agentSearches.integerValue { controller.agentMaxSearches = agentSearches.integerValue }
     }
 
     func controlTextDidChange(_ notification: Notification) { updateDraft() }
