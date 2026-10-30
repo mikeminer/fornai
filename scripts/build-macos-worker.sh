@@ -52,8 +52,8 @@ chmod 755 "$APP/Contents/MacOS/FornaiWorker" "$APP/Contents/Resources/runtime/no
 codesign --verify --strict "$APP/Contents/Resources/runtime/node"
 codesign --force --sign - --timestamp=none "$APP"
 codesign --verify --deep --strict "$APP"
-lipo -verify_arch "$ARCH" "$APP/Contents/MacOS/FornaiWorker"
-lipo -verify_arch "$ARCH" "$APP/Contents/Resources/runtime/node"
+lipo "$APP/Contents/MacOS/FornaiWorker" -verify_arch "$ARCH"
+lipo "$APP/Contents/Resources/runtime/node" -verify_arch "$ARCH"
 NODE="$APP/Contents/Resources/runtime/node"
 [[ "$("$NODE" --version)" == "v$NODE_VERSION" ]]
 xcrun swiftc -swift-version 5 -parse-as-library -sdk "$SDK" -target "$ARCH-apple-macosx13.5" \

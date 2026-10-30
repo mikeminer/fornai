@@ -80,7 +80,8 @@ enum WorkerPolicy {
     private static let alphabet = Array("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".utf8)
 
     static func matches(_ value: String, _ pattern: String) -> Bool {
-        value.range(of: pattern, options: .regularExpression) != nil
+        guard let range = value.range(of: pattern, options: .regularExpression) else { return false }
+        return range.lowerBound == value.startIndex && range.upperBound == value.endIndex
     }
 
     static func isWallet(_ value: String) -> Bool {

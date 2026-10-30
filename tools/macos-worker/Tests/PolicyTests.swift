@@ -76,7 +76,7 @@ import Darwin
         test("credits remain integer strings without precision loss") {
             let large = "900719925474099312345678901234567890"
             try require(WorkerPolicy.validCredit(large)); try require(WorkerPolicy.validCredit("0"))
-            for bad in ["-1", "+1", "1.0", "01", "1e3", " 1", String(repeating: "9", count: 61)] { try require(!WorkerPolicy.validCredit(bad)) }
+            for bad in ["-1", "+1", "1.0", "01", "1e3", " 1", "1\n", String(repeating: "9", count: 61)] { try require(!WorkerPolicy.validCredit(bad)) }
             let policy = WorkerCreditPolicy(unit: "FORNAI_CREDIT", jobCost: "1", workerReward: "1")
             let account = WorkerAccount(protocolVersion: 2, wallet: wallet, creditBalance: large, workerEarnedCredits: large, creditPolicy: policy, networkAuthorized: false)
             try WorkerPolicy.validateAccount(account, wallet: wallet)
@@ -119,7 +119,7 @@ import Darwin
         test("configuration blocks unsafe worker directory names") {
             var config = WorkerConfiguration(); config.wallet = wallet; config.apiKey = "fixture-key"
             _ = try WorkerPolicy.configuration(config, requirePair: false)
-            for name in [".", "..", "a/b", "a\\b", "worker\nother"] {
+            for name in [".", "..", "a/b", "a\\b", "worker\nother", "worker\n"] {
                 config.workerName = name; try rejects { _ = try WorkerPolicy.configuration(config, requirePair: false) }
             }
             config.workerName = "mac-book"; config.workerToken = "invalid"
