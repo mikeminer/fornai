@@ -134,7 +134,7 @@ import Darwin
             try require(values["FORNAI_WORKER_ENV_FILE"] == "")
             try require(values["FORNAI_AGENT_WEB_SEARCH"] == "0")
             try require(values["FORNAI_AGENT_SEARCH_ENGINE"] == "tavily-search")
-            try require(values["FORNAI_AGENT_MAX_STEPS"] == "4")
+            try require(values["FORNAI_AGENT_MAX_STEPS"] == "6")
             try require(values["FORNAI_AGENT_MAX_SEARCHES"] == "2")
         }
         test("legacy Keychain configuration preserves credentials with research disabled") {
@@ -190,7 +190,7 @@ import Darwin
         test("first launch keeps login and work disabled") {
             let config = WorkerConfiguration()
             try require(!config.autoStart && !config.runAtLogin && !config.saved && config.workerToken.isEmpty)
-            try require(!config.webSearchEnabled && config.searchEngine == "tavily-search" && config.agentMaxSteps == 4 && config.agentMaxSearches == 2)
+            try require(!config.webSearchEnabled && config.searchEngine == "tavily-search" && config.agentMaxSteps == 6 && config.agentMaxSearches == 2)
         }
         test("auto uses an actual advertised model instead of assuming an alias exists") {
             try require(try WorkerPolicy.automaticModel(["auto", "other"]) == "auto")
