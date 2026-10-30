@@ -11,7 +11,7 @@ L’app usa un’interfaccia nativa macOS e rimane disponibile nella barra dei m
 
 Il runtime necessario al worker è incluso nel pacchetto dell’app. Non è necessario installare Node separatamente per usare l’app distribuita.
 
-## Download della versione 0.2.0
+## Download della versione 0.3.0
 
 | Mac | App | Controllo SHA-256 |
 | --- | --- | --- |
@@ -20,7 +20,7 @@ Il runtime necessario al worker è incluso nel pacchetto dell’app. Non è nece
 
 Per verificare il download, salva ZIP e checksum nella stessa cartella e usa `shasum -a 256 -c fornai-worker-macos-arm64.sha256` dal Terminale in quella cartella; su Intel sostituisci `arm64` con `x64`.
 
-Le due versioni sono state compilate e verificate su runner macOS della rispettiva architettura: [risultati della build](https://github.com/mikeminer/fornai/actions/runs/41050741064). Per ciascuna sono passati 19 test della logica Swift, 32 test del runtime e lo smoke test della UI. Il collegamento al wallet reale e a FreeLLMAPI si completa sul proprio Mac.
+Le due versioni vengono compilate e verificate su runner macOS della rispettiva architettura: [build del worker](https://github.com/mikeminer/fornai/actions/workflows/macos-worker.yml). Ogni build controlla logica Swift, runtime, lettura dei repository e interfaccia. Il collegamento al wallet reale e a FreeLLMAPI si completa sul proprio Mac.
 
 ## Installazione e primo collegamento
 
@@ -35,11 +35,13 @@ La chiave FreeLLMAPI è locale; il collegamento al sito non la trasferisce a For
 
 ## Agente ricerca web
 
-La ricerca web è facoltativa e disattivata nelle configurazioni nuove e in quelle precedenti all’aggiornamento. Metti il worker in pausa, abilita **Agente ricerca web**, scegli Tavily, Exa o Firecrawl e salva. Il motore deve essere già configurato in FreeLLMAPI: il worker usa la stessa chiave unificata e non richiede altre credenziali.
+L’agente è disattivato nelle configurazioni nuove e in quelle precedenti all’aggiornamento finché non configuri un motore di ricerca. Metti il worker in pausa, abilita **Agente Fornai**, scegli Tavily, Exa o Firecrawl e salva. Il motore deve essere già configurato in FreeLLMAPI: il worker usa la stessa chiave unificata e non richiede altre credenziali.
 
-Puoi impostare da 2 a 8 passaggi e da 1 a 5 ricerche per task; i valori iniziali sono 4 passaggi e 2 ricerche. Il limite di passaggi può fermare il lavoro prima di raggiungere quello delle ricerche. Nella console del sito scegli **Ricerca web**: il task attende un worker con questa capacità attiva. **Risposta** mantiene il comportamento senza ricerche.
+Puoi impostare da 2 a 8 passaggi e da 1 a 5 ricerche per task; i valori iniziali sono 6 passaggi e 2 ricerche. Il limite di passaggi può fermare il lavoro prima di raggiungere quello delle ricerche. La chat sul sito e nell'app è unica: ogni richiesta parte da una ricerca online e attende un worker aggiornato con questa capacità attiva.
 
-L’agente lavora sugli estratti e sui collegamenti restituiti dal motore; non controlla un browser e non accede ai repository. L’avanzamento compare nello stato del worker, usando i messaggi già disponibili nell’app.
+L’agente usa gli estratti e i collegamenti del motore. Se indichi un link a un repository pubblico GitHub, può esplorarne struttura e file pertinenti e citare le righe effettivamente lette. I riferimenti al codice puntano alla versione esaminata. I repository privati e le cartelle locali non sono accessibili. L'avanzamento compare nello stato del worker. Le richieste precedenti conservano la modalità originale.
+
+L'analisi è mirata: legge estratti entro il tempo e il numero di passaggi configurati, non l'intero repository senza limiti. Se GitHub limita le richieste anonime o nessun file può essere letto, il task lo segnala invece di dichiarare un'analisi completata. I file recuperati sono dati da analizzare, mai comandi da eseguire.
 
 ## Barra dei menu e avvio
 

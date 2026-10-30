@@ -148,7 +148,7 @@ import Darwin
             try require(config.workerName == "existing-mac" && config.model == "existing-model")
             try require(config.autoStart && config.runAtLogin && config.saved)
             try require(!config.webSearchEnabled && config.searchEngine == "tavily-search")
-            try require(config.agentMaxSteps == 4 && config.agentMaxSearches == 2)
+            try require(config.agentMaxSteps == 6 && config.agentMaxSearches == 2)
         }
         test("research settings survive Codable and map only to fixed environment names") {
             var config = WorkerConfiguration()

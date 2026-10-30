@@ -16,7 +16,7 @@ The app includes Node 24.21.0. FreeLLMAPI must already be configured and running
 
 Both builds passed 19 Swift tests, 32 runtime tests and UI smoke tests on their respective macOS runners. See the [successful build](https://github.com/mikeminer/fornai/actions/runs/41050741064) and the setup guide for checksums and first-open instructions. The app is ad-hoc signed and is not Apple-notarized.
 
-This version adds an optional web research agent using the search engines already configured in FreeLLMAPI. Enable research in the app, select Tavily, Exa or Firecrawl and set step/search limits. Choose **Ricerca web** on Fornai to submit a research job; older text-only workers cannot claim it.
+Version 0.3.0 supports Fornai's unified assistant: every new chat request starts with a web search, then the agent can inspect public GitHub repositories explicitly linked by the user. Enable the agent, select Tavily, Exa or Firecrawl in the app and set step/search limits. Repository reads use anonymous GitHub requests, an immutable commit and bounded text excerpts; code citations identify files and lines actually read. Older workers cannot claim these new agent tasks. No local files, private repositories or shell commands are exposed to chat requests.
 
 See [the Italian setup guide](docs/MACOS-WORKER.md) for pairing, pause/start, credits and login options.
 

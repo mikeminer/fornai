@@ -16,7 +16,7 @@ struct WorkerConfiguration: Codable {
     var tokenWallet = ""
     var webSearchEnabled = false
     var searchEngine = "tavily-search"
-    var agentMaxSteps = 4
+    var agentMaxSteps = 6
     var agentMaxSearches = 2
     var autoStart = false
     var runAtLogin = false
@@ -46,7 +46,7 @@ struct WorkerConfiguration: Codable {
         // and apply the same bounded defaults used for a first installation.
         webSearchEnabled = try values.decodeIfPresent(Bool.self, forKey: .webSearchEnabled) ?? false
         searchEngine = try values.decodeIfPresent(String.self, forKey: .searchEngine) ?? "tavily-search"
-        agentMaxSteps = try values.decodeIfPresent(Int.self, forKey: .agentMaxSteps) ?? 4
+        agentMaxSteps = try values.decodeIfPresent(Int.self, forKey: .agentMaxSteps) ?? 6
         agentMaxSearches = try values.decodeIfPresent(Int.self, forKey: .agentMaxSearches) ?? 2
     }
 }

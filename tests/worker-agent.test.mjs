@@ -75,7 +75,7 @@ async function fixture(t, options = {}) {
 test("research executes a tool roundtrip and settles once with measured total usage and real sources", async t => {
   const f = await fixture(t);
   await f.make().run({ once: true });
-  assert.deepEqual(f.seen.claims[0].capabilities, ["web.search"]);
+  assert.deepEqual(f.seen.claims[0].capabilities, ["web.search", "agent.v1"]);
   assert.equal(f.seen.search.length, 1); assert.equal(f.seen.llm.length, 2); assert.equal(f.seen.complete.length, 1);
   assert.equal(f.seen.complete[0].status, "completed");
   assert.deepEqual(f.seen.complete[0].usage, { promptTokens: 20, completionTokens: 8 });

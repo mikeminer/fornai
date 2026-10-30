@@ -14,11 +14,11 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
     private let wallet = NSTextField()
     private let workerName = NSTextField()
     private let model = NSComboBox()
-    private let webSearch = NSButton(checkboxWithTitle: "Abilita la ricerca web per questo worker", target: nil, action: nil)
+    private let webSearch = NSButton(checkboxWithTitle: "Abilita l’agente Fornai: web e GitHub", target: nil, action: nil)
     private let searchEngine = NSPopUpButton(frame: .zero, pullsDown: false)
     private let agentSteps = NSStepper()
     private let agentSearches = NSStepper()
-    private let stepsValue = WorkerView.label("4", size: 14, weight: .medium)
+    private let stepsValue = WorkerView.label("6", size: 14, weight: .medium)
     private let searchesValue = WorkerView.label("2", size: 14, weight: .medium)
     private let searchEngines = ["tavily-search", "exa-search", "firecrawl-search"]
     private let autoStart = NSButton(checkboxWithTitle: "Avvia il worker quando apro l’app", target: nil, action: nil)
@@ -209,7 +209,7 @@ final class WorkerView: NSView, NSTextFieldDelegate, NSComboBoxDelegate {
         api.addArrangedSubview(verifyButton)
         add(api, to: content)
 
-        let research = section("Agente ricerca web", copy: "Usa estratti e collegamenti dei risultati con la stessa chiave FreeLLMAPI. Configura il motore scelto in FreeLLMAPI. Non apre browser o repository.")
+        let research = section("Agente Fornai", copy: "Cerca online prima di rispondere e legge i repository pubblici GitHub indicati nella chat. Configura il motore scelto in FreeLLMAPI: si usa la stessa chiave unificata.")
         register(webSearch, "settings.webSearchEnabled", label: webSearch.title)
         webSearch.target = self
         webSearch.action = #selector(preferencesChanged)
