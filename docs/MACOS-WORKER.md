@@ -65,6 +65,8 @@ Se macOS impedisce l’apertura, verifica prima che il download provenga dai lin
 
 ## Verifica di sviluppo su macOS
 
+Le istruzioni di sviluppo e compilazione sono destinate al titolare e a chi ha ricevuto una sua autorizzazione scritta. Non concedono permessi aggiuntivi rispetto alla [licenza del progetto](../LICENSE). L'installazione e l'uso delle app ufficiali restano consentiti nei termini della licenza.
+
 La UI è in `tools/macos-worker/Sources/Main.swift` e `WorkerView.swift`; la logica del worker e la persistenza sono nel controller separato. Richiede AppKit e Combine e usa la modalità linguistica Swift 5. Il punto di ingresso `@main` viene compilato con `-parse-as-library`.
 
 L’eseguibile dell’app supporta uno smoke test isolato:

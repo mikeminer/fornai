@@ -2,3 +2,11 @@ tools/macos-worker/build/
 .DS_Store
 .env*
 .worker-state/
+.secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+settings.dpapi
+local.properties

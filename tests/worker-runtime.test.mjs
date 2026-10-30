@@ -1,3 +1,6 @@
+// Copyright (c) 2026 mikeminer. All rights reserved.
+// SPDX-License-Identifier: LicenseRef-Fornai-Proprietary
+
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";

@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) 2026 mikeminer. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-Fornai-Proprietary
+
 set -euo pipefail
 
 # Run on macOS, not through a cross-compiler. Never packages user configuration.
@@ -27,6 +30,13 @@ cp "$NODE_ROOT/LICENSE" "$APP/Contents/Resources/runtime/NODE-LICENSE.txt"
 cp "$ROOT/scripts/worker-runtime.mjs" "$ROOT/scripts/tray-worker.mjs" "$APP/Contents/Resources/runtime/"
 cp "$ROOT/tools/macos-worker/Info.plist" "$APP/Contents/Info.plist"
 cp "$ROOT/tools/macos-worker/Resources/fornai_logo.png" "$APP/Contents/Resources/fornai_logo.png"
+# Keep project permissions separate from the complete upstream Node.js notices.
+for notice in LICENSE THIRD_PARTY_NOTICES.md; do
+  test -s "$ROOT/$notice"
+  cp "$ROOT/$notice" "$APP/Contents/Resources/$notice"
+  cmp "$ROOT/$notice" "$APP/Contents/Resources/$notice"
+done
+cmp "$NODE_ROOT/LICENSE" "$APP/Contents/Resources/runtime/NODE-LICENSE.txt"
 plutil -lint "$APP/Contents/Info.plist"
 
 # Platform icon compilation: preserve the artwork's proportions and cream canvas.

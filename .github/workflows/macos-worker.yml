@@ -1,8 +1,11 @@
+# Copyright (c) 2026 mikeminer. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-Fornai-Proprietary
+
 name: macOS Worker
 on:
   push:
     branches: [main, 'codex/macos-worker*']
-    paths: ['tools/macos-worker/**', 'scripts/worker-runtime.mjs', 'scripts/tray-worker.mjs', 'scripts/build-macos-worker.sh', 'tests/*worker*.mjs', '.github/workflows/macos-worker.yml']
+    paths: ['tools/macos-worker/**', 'scripts/worker-runtime.mjs', 'scripts/tray-worker.mjs', 'scripts/build-macos-worker.sh', 'tests/*worker*.mjs', '.github/workflows/macos-worker.yml', 'LICENSE', 'THIRD_PARTY_NOTICES.md']
   workflow_dispatch:
 permissions:
   contents: read

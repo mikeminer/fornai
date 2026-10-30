@@ -1,3 +1,6 @@
+// Copyright (c) 2026 mikeminer. All rights reserved.
+// SPDX-License-Identifier: LicenseRef-Fornai-Proprietary
+
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";

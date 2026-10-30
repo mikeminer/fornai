@@ -1,3 +1,6 @@
+// Copyright (c) 2026 mikeminer. All rights reserved.
+// SPDX-License-Identifier: LicenseRef-Fornai-Proprietary
+
 // Private stdin/stdout IPC with the native desktop app. Never run this adapter
 // with stdout redirected to a log: credential messages belong only to its host.
 import { randomUUID } from "node:crypto";

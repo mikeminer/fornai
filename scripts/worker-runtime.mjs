@@ -1,3 +1,6 @@
+// Copyright (c) 2026 mikeminer. All rights reserved.
+// SPDX-License-Identifier: LicenseRef-Fornai-Proprietary
+
 // Canonical runtime: downloadable Node, PS1 and EXE workers embed this file.
 // Text, web research and bounded public GitHub reading. No shell or local repository access.
 import { createHash, randomUUID } from "node:crypto";

@@ -1,0 +1,87 @@
+FORNAI Proprietary License
+Version 1.0 — 30 October 2026
+SPDX identifier: LicenseRef-Fornai-Proprietary
+
+Copyright (c) 2026 mikeminer. All rights reserved.
+
+1. Scope and ownership
+
+This license applies to the original FORNAI source code, scripts, tests,
+documentation, artwork and other project materials accompanying this notice,
+only to the extent that the relevant rights are owned or controlled by mikeminer
+(the "Licensor"). These materials are collectively the "Materials". Separately
+licensed third-party material is excluded, as explained in section 5.
+
+Publication of source code is for inspection and transparency. The Materials
+are proprietary; this is not an open-source license. Rights not expressly
+granted below remain reserved to their respective holders.
+
+2. Official application use
+
+The Licensor grants a non-exclusive, non-transferable permission to download,
+install, make necessary backup copies of, and run unmodified official FORNAI
+application builds made available by the Licensor, for their intended use with
+the FORNAI service. This includes operating a worker and earning or spending
+service credits through the supported functionality. This permission does not
+itself grant service access, a subscription, credits, or any payment entitlement.
+Applicable service terms remain separate.
+
+Retain the copyright and license notices supplied with these builds. No right
+to redistribute the builds, sublicense them, or offer a separate hosted,
+white-label or competing service using the Materials is granted by this clause.
+
+3. Source code and other reserved uses
+
+You may read the publicly displayed Materials. Except for section 2, section 4,
+or prior written permission from the Licensor, no permission is granted to copy,
+modify, adapt, translate, compile, distribute, sublicense, sell, or create
+derivative works from the Materials, or incorporate them into another product
+or service. This restriction applies to commercial and non-commercial reuse.
+No trademark, branding or patent license is granted, except displaying the
+branding already present during permitted use of an official application.
+
+Development instructions describe the Licensor's build process; they are not
+an additional license to build, change or redistribute the source. Requests
+for additional permission may be addressed to the repository owner, mikeminer,
+at https://github.com/mikeminer/fornai. Permission must be explicit and written;
+silence, a public repository or a fork does not grant additional reuse rights.
+
+4. Existing rights, platform terms and mandatory exceptions
+
+Nothing in this license restricts rights that cannot lawfully be excluded,
+including applicable copyright exceptions and mandatory rights of software
+users. Nothing in it overrides permissions already granted under applicable
+GitHub terms, including GitHub's platform licenses and the rights of users to
+view and fork public repositories through GitHub's functionality.
+
+This notice does not revoke an earlier valid license, erase existing copies,
+or retroactively withdraw permissions already granted for earlier versions.
+It does not claim exclusive rights over ideas, methods, functionality, facts
+or other material that applicable law does not protect by copyright.
+
+5. Third-party components and external content
+
+Third-party software, libraries, runtimes, SDKs and their notices remain under
+their respective licenses. Those licenses govern the relevant components and
+are not replaced or restricted by this license. In particular, the bundled
+Node.js runtime retains its complete upstream license and dependency notices.
+Consult THIRD_PARTY_NOTICES.md and the license files supplied with a build.
+
+External services, model providers, search results, retrieved repository
+content and user content are not relicensed by FORNAI under this notice.
+
+6. Warranty and liability
+
+To the maximum extent permitted by applicable law, the Materials are provided
+"as is", without warranties, including warranties of merchantability, fitness
+for a particular purpose and non-infringement. To that same extent, the
+Licensor is not liable for damages arising from use of the Materials. Nothing
+in this section excludes mandatory consumer rights or liability that cannot
+lawfully be limited or excluded.
+
+7. Separate agreements
+
+A separate written agreement with the Licensor may grant additional rights
+and controls to the extent of a conflict. Third-party rights are unaffected.
+If a provision of this license is unenforceable, the remaining provisions
+continue to apply to the extent permitted by law.
