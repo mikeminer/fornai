@@ -11,7 +11,7 @@ L’app usa un’interfaccia nativa macOS e rimane disponibile nella barra dei m
 
 Il runtime necessario al worker è incluso nel pacchetto dell’app. Non è necessario installare Node separatamente per usare l’app distribuita.
 
-## Download della versione 0.1.0
+## Download della versione 0.2.0
 
 | Mac | App | Controllo SHA-256 |
 | --- | --- | --- |
@@ -20,7 +20,7 @@ Il runtime necessario al worker è incluso nel pacchetto dell’app. Non è nece
 
 Per verificare il download, salva ZIP e checksum nella stessa cartella e usa `shasum -a 256 -c fornai-worker-macos-arm64.sha256` dal Terminale in quella cartella; su Intel sostituisci `arm64` con `x64`.
 
-Le due versioni sono state compilate e verificate su runner macOS della rispettiva architettura: [risultati della build](https://github.com/mikeminer/fornai/actions/runs/41047327712). Per ciascuna sono passati 15 test della logica Swift, 19 test del runtime e lo smoke test della UI. Il collegamento al wallet reale e a FreeLLMAPI si completa sul proprio Mac.
+Le due versioni sono state compilate e verificate su runner macOS della rispettiva architettura: [risultati della build](https://github.com/mikeminer/fornai/actions/runs/41050741064). Per ciascuna sono passati 19 test della logica Swift, 32 test del runtime e lo smoke test della UI. Il collegamento al wallet reale e a FreeLLMAPI si completa sul proprio Mac.
 
 ## Installazione e primo collegamento
 
