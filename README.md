@@ -9,6 +9,13 @@ Native macOS menu-bar companion for [fornai.dev](https://fornai.dev). Connect a 
 
 The app includes Node 24.21.0. FreeLLMAPI must already be configured and running on the same Mac. No Node installation is needed by end users.
 
+## Download 0.1.0
+
+- [Apple Silicon ZIP](https://fornai.dev/downloads/fornai-worker-macos-arm64.zip)
+- [Intel ZIP](https://fornai.dev/downloads/fornai-worker-macos-x64.zip)
+
+Both builds passed native Swift, runtime and UI smoke tests on their respective macOS runners. See the [successful build](https://github.com/mikeminer/fornai/actions/runs/41047327712) and the setup guide for checksums and first-open instructions. The app is ad-hoc signed and is not Apple-notarized.
+
 See [the Italian setup guide](docs/MACOS-WORKER.md) for pairing, pause/start, credits and login options.
 
 ## Build and verify

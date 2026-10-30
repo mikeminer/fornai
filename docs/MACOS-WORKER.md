@@ -11,6 +11,17 @@ L’app usa un’interfaccia nativa macOS e rimane disponibile nella barra dei m
 
 Il runtime necessario al worker è incluso nel pacchetto dell’app. Non è necessario installare Node separatamente per usare l’app distribuita.
 
+## Download della versione 0.1.0
+
+| Mac | App | Controllo SHA-256 |
+| --- | --- | --- |
+| Apple Silicon | [Scarica ZIP](https://fornai.dev/downloads/fornai-worker-macos-arm64.zip) | [Checksum](https://fornai.dev/downloads/fornai-worker-macos-arm64.sha256) |
+| Intel | [Scarica ZIP](https://fornai.dev/downloads/fornai-worker-macos-x64.zip) | [Checksum](https://fornai.dev/downloads/fornai-worker-macos-x64.sha256) |
+
+Per verificare il download, salva ZIP e checksum nella stessa cartella e usa `shasum -a 256 -c fornai-worker-macos-arm64.sha256` dal Terminale in quella cartella; su Intel sostituisci `arm64` con `x64`.
+
+Le due versioni sono state compilate e verificate su runner macOS della rispettiva architettura: [risultati della build](https://github.com/mikeminer/fornai/actions/runs/41047327712). Per ciascuna sono passati 15 test della logica Swift, 19 test del runtime e lo smoke test della UI. Il collegamento al wallet reale e a FreeLLMAPI si completa sul proprio Mac.
+
 ## Installazione e primo collegamento
 
 1. Apri l’archivio della versione adatta al Mac e sposta `FORNAI Worker.app` in Applicazioni.
@@ -40,7 +51,7 @@ Per un worker abilitato, ogni task completato per un altro wallet guadagna **1 c
 
 Lo script di build attuale applica una **firma ad hoc** all’app. Non applica una firma Developer ID e non esegue la notarizzazione Apple. I controlli CI verificano l’integrità della firma, ma non attestano una notarizzazione.
 
-Se macOS impedisce l’apertura, verifica prima che il download provenga dalla distribuzione Fornai prevista e che il suo SHA-256 corrisponda al file di controllo pubblicato. Soltanto per un pacchetto verificato, puoi usare **Impostazioni di Sistema → Privacy e sicurezza → Apri comunque** e confermare l’apertura di questa app. Non occorre disabilitare Gatekeeper o rimuovere indiscriminatamente gli attributi di quarantena. Prima della distribuzione pubblica vanno verificati l’artefatto concreto e il suo stato di firma.
+Se macOS impedisce l’apertura, verifica prima che il download provenga dai link Fornai sopra e che il suo SHA-256 corrisponda al file di controllo pubblicato. Soltanto per un pacchetto verificato, puoi usare **Impostazioni di Sistema → Privacy e sicurezza → Apri comunque** e confermare l’apertura di questa app. Non occorre disabilitare Gatekeeper o rimuovere indiscriminatamente gli attributi di quarantena.
 
 ## Verifica di sviluppo su macOS
 
